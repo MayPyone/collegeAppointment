@@ -6,6 +6,8 @@ const teacherSchema = new mongoose.Schema({
     name: {type:String ,required: true},
     email: {type:String ,required: true, unique: true},
     password: {type:String ,required: true},
+    slot_booked: {type:Object, default: {}},
+    avaiable_slots:{type:Object, default:[]},
     role: {type: String, enum: ['teacher','student'], default: 'student'}
 })
 

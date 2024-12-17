@@ -3,12 +3,10 @@ import mongoose from "mongoose";
 const {required} = Joi
 
 const appointmentSchema = new mongoose.Schema({
-    studentId: {type: String, required: true},
-    professorId: {type: String, required: true},
+    studentId: {type: mongoose.Types.ObjectId,ref: 'student', required: true},
+    teacherId: {type: mongoose.Types.ObjectId,ref: 'teacher', required: true},
     slotDate: {type: String, required: true},
     slotTime: {type: String, required: true},
-    studentData : {type: Object, required: true},
-    professorData : {type: Object, required: true},
     date: {type: Number, required: true},
     cancelled: {type: Boolean, default: false},
 })

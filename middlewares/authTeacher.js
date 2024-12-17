@@ -3,17 +3,20 @@ import { StatusCodes } from "http-status-codes"
 
 const authTeacher = async(req,res,next) => {
     try{
-      const  {token} = req.body
+      const  {token} = req.headers
+      console.log(token)
         if(!token){
-            res.status(401).json({success:false, message: 'Please Log in again!'})
+            return res.status(401).json({success:false, message: 'Token missing, Please Log in again!'})
         }
 
         const token_decode = jwt.verify(token,process.env.JWT_SECRET)
 
         req.body.teacherId = token_decode.id
+        next()
 
     }catch(error){
-        res.status(401).json({success: true, message: 'Invalid credential'})
+        console.log(error)
+        return res.status(401).json({success: true, message: 'Invalid credential'})
     }
 }
 

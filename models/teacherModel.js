@@ -7,9 +7,9 @@ const teacherSchema = new mongoose.Schema({
     email: {type:String ,required: true, unique: true},
     password: {type:String ,required: true},
     slot_booked: {type:Object, default: {}},
-    avaiable_slots:{type:Object, default:[]},
+    avaiable_slots:{type:Object, default:{}},
     role: {type: String, enum: ['teacher','student'], default: 'student'}
-})
+}, { minimize: false })
 
 const teacherModel = mongoose.models.professor || mongoose.model('teacher',teacherSchema)
 

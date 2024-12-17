@@ -86,9 +86,20 @@ const bookAppointment = async (req, res) => {
 
 
     } catch (error) {
-        console.log(error.message)
         res.status(401).json({ success: false, message: error.message })
     }
 }
 
-export { studentLogin, bookAppointment, getAvaiableSlots }
+const getAppointment = async (req, res) => {
+    try{
+        const {appointmentId, studentId} = req.obj
+        const student = await studentModel.findById(studentId)
+        const appointment = await appointmentModel.findById(appointmentId)
+        console.log(appointment)
+        res.json({success: true})
+    }catch(error){
+        res.status(401).json({ success: false, message: error.message })
+    }
+}
+
+export { studentLogin, bookAppointment, getAvaiableSlots, getAppointment }

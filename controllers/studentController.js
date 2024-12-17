@@ -26,17 +26,33 @@ const studentLogin = async (req, res) => {
 
 }
 
+const getAvaiableSlots = async (req, res) => {
+    try {
+        const { teacherEmail } = req.body
+        if (!teacherEmail) {
+            return res.json({ success: false, message: "Please provide teacher's email to see his available time!" })
+        }
+        const teacher = await teacherModel.findOne({ email: teacherEmail })
+        const avaiable_slots = teacher.avaiable_slots;
+        return res.json({ success: true, avaiable_slots })
+
+    } catch (error) {
+        console.log(error.message)
+        res.status(401).json({ success: false, message: error.message })
+    }
+}
+
 const bookAppointment = async (req, res) => {
     try {
-        const {studentId, teacherId, slotDate, slotTime} = req.body
-        if(!studentId || !teacherId || !slotDate || !slotTime) {
-            return res.json({success: false, message: "Missing information"})
+        const { studentId, teacherId, slotDate, slotTime } = req.body
+        if (!studentId || !teacherId || !slotDate || !slotTime) {
+            return res.json({ success: false, message: "Missing information" })
         }
 
-        const teacher = await teacherModel.findOne({_id: teacherId})
+        const teacher = await teacherModel.findOne({ _id: teacherId })
         const avaiable_slots = teacher.avaiable_slots
-        if(!avaiable_slots[slotDate.includes(slotTime)]) {
-            return res.json({success: false, message: "Teacher is not avaiable at this time"})
+        if (!avaiable_slots[slotDate.includes(slotTime)]) {
+            return res.json({ success: false, message: "Teacher is not avaiable at this time" })
         }
 
         const appointment = {
@@ -46,28 +62,26 @@ const bookAppointment = async (req, res) => {
             slotTime,
             date: Date.now()
         }
-       const newAppointment= await new appointmentModel(appointment)
-       newAppointment.save()
-
-       
-       let slot_booked = teacher.slot_booked
-
-       if (!slot_booked[slotDate]) {
-          slot_booked[slotDate] = []
-       }
-
-       if(slot_booked[slotDate].includes(slotTime)) {
-          return res.json({success: false, message: "Not available"})
-       }
-
-       slot_booked[slotDate].push(slotTime)
+        const newAppointment = await new appointmentModel(appointment)
+        newAppointment.save()
 
 
-      const newSlotbooked=  await teacherModel.findByIdAndUpdate(teacherId, {slot_booked},{new: true})
+        let slot_booked = teacher.slot_booked
 
-      console.log(newSlotbooked)
+        if (!slot_booked[slotDate]) {
+            slot_booked[slotDate] = []
+        }
 
-       return res.json({success: true, message: "Booked an appointment successfully"})
+        if (slot_booked[slotDate].includes(slotTime)) {
+            return res.json({ success: false, message: "Not available" })
+        }
+
+        slot_booked[slotDate].push(slotTime)
+
+
+        await teacherModel.findByIdAndUpdate(teacherId, { slot_booked }, { new: true })
+
+        return res.json({ success: true, message: "Booked an appointment successfully" })
 
 
 
@@ -77,4 +91,4 @@ const bookAppointment = async (req, res) => {
     }
 }
 
-export { studentLogin, bookAppointment }
+export { studentLogin, bookAppointment, getAvaiableSlots }

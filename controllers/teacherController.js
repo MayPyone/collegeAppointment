@@ -2,6 +2,7 @@ import bcrypt from "bcrypt"
 import jwt from "jsonwebtoken"
 import { StatusCodes } from "http-status-codes";
 import teacherModel from "../models/teacherModel.js";
+import appointmentModel from "../models/appointmentModel.js";
 
 
 const teacherLogin = async (req, res) => {
@@ -46,4 +47,28 @@ const addAvailableSlots = async (req, res) => {
     }
 };
 
-export { teacherLogin, addAvailableSlots }
+const cancelAppointment = async (req, res) => {
+    try{
+       const {appointmentId, teacherId} = req.body
+       console.log(teacherId)
+       const appointment = await appointmentModel.findOne({_id: appointmentId})
+       console.log(appointment.teacherId)
+       if(!teacherId || teacherId !== appointment.teacherId.toString() ) {
+        return res.json({success: false, message: "Teacher is not found!"})
+       }
+       if(!appointmentId){
+        return res.json({success: false, message: "Appointment is not found!"})
+       }
+      
+       await appointmentModel.findByIdAndUpdate({_id: appointmentId},{cancelled: true},{new: true})
+       
+       res.json({success: true, message: "Appointment was cancelled"})
+       
+    }catch(error){
+        res.status(500).json({ success: false, message: error.message });
+    }
+}
+
+
+
+export { teacherLogin, addAvailableSlots, cancelAppointment }

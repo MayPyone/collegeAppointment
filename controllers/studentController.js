@@ -10,35 +10,33 @@ const studentLogin = async (req, res) => {
         const { email, password } = req.body
         const student = await studentModel.findOne({ email })
         if (!student) {
-            res.status(404).json({ success: false, message: "Student can't be found!" })
+            return res.status(404).json({ success: false, message: "Student can't be found!" })
         }
         const isMatch = await bcrypt.compare(password, student.password)
         if (isMatch) {
             const token = jwt.sign({ id: student._id }, process.env.JWT_SECRET)
-            res.status(200).json({ success: true, token })
+            return res.status(200).json({ success: true, token })
         } else {
-            res.status(401).json({ success: false, message: "Invalid credential" })
+            return res.status(401).json({ success: false, message: "Invalid credential" })
         }
     } catch (error) {
-        console.log(error.message)
-        res.status(401).json({ success: false, message: error.message })
+        return res.status(500).json({ success: false, message: error.message })
     }
 
 }
 
-const getAvaiableSlots = async (req, res) => {
+const getAvailableSlots = async (req, res) => {
     try {
         const { teacherEmail } = req.body
         if (!teacherEmail) {
-            return res.json({ success: false, message: "Please provide teacher's email to see his available time!" })
+            return res.status(400).json({ success: false, message: "Please provide teacher's email to see his available time!" })
         }
         const teacher = await teacherModel.findOne({ email: teacherEmail })
-        const avaiable_slots = teacher.avaiable_slots;
-        return res.json({ success: true, avaiable_slots })
+        const available_slots = teacher.available_slots;
+        return res.status(200).json({ success: true, available_slots })
 
     } catch (error) {
-        console.log(error.message)
-        res.status(401).json({ success: false, message: error.message })
+        res.status(500).json({ success: false, message: error.message })
     }
 }
 
@@ -46,13 +44,13 @@ const bookAppointment = async (req, res) => {
     try {
         const { studentId, teacherId, slotDate, slotTime } = req.body
         if (!studentId || !teacherId || !slotDate || !slotTime) {
-            return res.json({ success: false, message: "Missing information" })
+            return res.status(400).json({ success: false, message: "Missing information" })
         }
 
         const teacher = await teacherModel.findOne({ _id: teacherId })
-        const avaiable_slots = teacher.avaiable_slots
-        if (!avaiable_slots[slotDate.includes(slotTime)]) {
-            return res.json({ success: false, message: "Teacher is not avaiable at this time" })
+        const available_slots = teacher.available_slots
+        if (!available_slots[slotDate] || !available_slots[slotDate].includes(slotTime)) {
+            return res.status(404).json({ success: false, message: "Teacher is not avaiable at this time" })
         }
 
         const appointment = {
@@ -73,7 +71,7 @@ const bookAppointment = async (req, res) => {
         }
 
         if (slot_booked[slotDate].includes(slotTime)) {
-            return res.json({ success: false, message: "Not available" })
+            return res.status(400).json({ success: false, message: "Not available" })
         }
 
         slot_booked[slotDate].push(slotTime)
@@ -81,25 +79,25 @@ const bookAppointment = async (req, res) => {
 
         await teacherModel.findByIdAndUpdate(teacherId, { slot_booked }, { new: true })
 
-        return res.json({ success: true, message: "Booked an appointment successfully" })
-
-
+        return res.status(200).json({ success: true, message: "Booked an appointment successfully" })
 
     } catch (error) {
-        res.status(401).json({ success: false, message: error.message })
+        return res.status(500).json({ success: false, message: error.message })
     }
 }
 
-const getAppointment = async (req, res) => {
-    try{
-        const {appointmentId, studentId} = req.obj
-        const student = await studentModel.findById(studentId)
-        const appointment = await appointmentModel.findById(appointmentId)
-        console.log(appointment)
-        res.json({success: true})
-    }catch(error){
-        res.status(401).json({ success: false, message: error.message })
+const getAllAppointments = async (req, res) => {
+    try {
+        const { studentId } = req.body
+        if (!studentId) {
+            return res.status(400).json({ success: false, message: "Student ID is required" });
+        }
+        const appointments = await appointmentModel.find({ studentId: studentId, cancelled: false });
+
+        return res.status(200).json({ success: true, appointments })
+    } catch (error) {
+        return res.status(500).json({ success: false, message: error.message })
     }
 }
 
-export { studentLogin, bookAppointment, getAvaiableSlots, getAppointment }
+export { studentLogin, bookAppointment, getAvailableSlots, getAllAppointments }

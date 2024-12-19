@@ -7,7 +7,7 @@ import studentRouter from './routes/studentRoute.js'
 import teacherRouter from './routes/teacherRoute.js'
 
 const app = express();
-const port = process.env.PORT || 3000
+const port = process.env.PORT || 6000
 
 connectDB()
 
@@ -23,6 +23,7 @@ app.get('/',(req,res) =>(
     res.send('api working')
 ))
 
+if (process.env.NODE_ENV !== 'test') {
 app.listen(port, (error) => {
     if (!error) {
         console.log("Server is Successfully Running, Listening on port", port);
@@ -33,3 +34,6 @@ app.listen(port, (error) => {
     }
 }
 );
+}
+
+export default app;

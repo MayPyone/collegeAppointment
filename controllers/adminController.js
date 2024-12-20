@@ -1,6 +1,5 @@
 import validator from "validator"
 import bcrypt from "bcrypt"
-import { StatusCodes } from "http-status-codes";
 import studentModel from "../models/studentModel.js";
 import teacherModel from "../models/teacherModel.js";
 

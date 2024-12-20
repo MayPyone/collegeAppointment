@@ -1,6 +1,5 @@
 import bcrypt from "bcrypt"
 import jwt from "jsonwebtoken"
-import { StatusCodes } from "http-status-codes";
 import studentModel from "../models/studentModel.js";
 import appointmentModel from "../models/appointmentModel.js";
 import teacherModel from "../models/teacherModel.js";
@@ -28,11 +27,18 @@ const studentLogin = async (req, res) => {
 const getAvailableSlots = async (req, res) => {
     try {
         const { teacherEmail } = req.body
+        console.log(teacherEmail)
         if (!teacherEmail) {
             return res.status(400).json({ success: false, message: "Please provide teacher's email to see his available time!" })
         }
         const teacher = await teacherModel.findOne({ email: teacherEmail })
+        if (!teacher) {
+            return res.status(404).json({ success: false, message: "Teacher not found!" });
+        }
         const available_slots = teacher.available_slots;
+        if(!available_slots) {
+            return res.status(400).json({success: false, message: "No available slots"})
+        }
         return res.status(200).json({ success: true, available_slots })
 
     } catch (error) {
@@ -88,7 +94,8 @@ const bookAppointment = async (req, res) => {
 
 const getAllAppointments = async (req, res) => {
     try {
-        const { studentId } = req.body
+        const { studentId } = req.query
+        console.log(studentId)
         if (!studentId) {
             return res.status(400).json({ success: false, message: "Student ID is required" });
         }

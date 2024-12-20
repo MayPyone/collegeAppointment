@@ -1,4 +1,3 @@
-module.exports ={
-    "preset": "@shelf/jest-mongodb",
-    "testTimeout": 30000
-  }
+module.exports = {
+  preset: '@shelf/jest-mongodb',
+};

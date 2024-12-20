@@ -1,11 +1,10 @@
 import jwt from "jsonwebtoken"
-import { StatusCodes } from "http-status-codes"
 
 const authStudent = async(req,res,next) => {
     try{
       const  {token} = req.headers
         if(!token){
-            res.status(401).json({success:false, message: 'Please Log in again!'})
+          return  res.status(401).json({success:false, message: 'Please Log in again!'})
         }
 
         const token_decode = jwt.verify(token,process.env.JWT_SECRET)
@@ -14,7 +13,7 @@ const authStudent = async(req,res,next) => {
         next()
 
     }catch(error){
-        res.status(401).json({success: true, message: 'Invalid credential'})
+      return  res.status(401).json({success: false, message: 'Invalid credential'})
     }
 }
 

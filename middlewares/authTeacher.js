@@ -1,5 +1,4 @@
 import jwt from "jsonwebtoken"
-import { StatusCodes } from "http-status-codes"
 
 const authTeacher = async(req,res,next) => {
     try{
@@ -14,8 +13,7 @@ const authTeacher = async(req,res,next) => {
         next()
 
     }catch(error){
-        console.log(error)
-        return res.status(401).json({success: true, message: 'Invalid credential'})
+        return res.status(401).json({success: false, message: 'Invalid credential'})
     }
 }
 

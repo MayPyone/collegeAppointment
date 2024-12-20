@@ -27,7 +27,6 @@ const studentLogin = async (req, res) => {
 const getAvailableSlots = async (req, res) => {
     try {
         const { teacherEmail } = req.body
-        console.log(teacherEmail)
         if (!teacherEmail) {
             return res.status(400).json({ success: false, message: "Please provide teacher's email to see his available time!" })
         }
@@ -55,6 +54,7 @@ const bookAppointment = async (req, res) => {
 
         const teacher = await teacherModel.findOne({ _id: teacherId })
         const available_slots = teacher.available_slots
+        //verifies if the requested slotDate and slotTime are available in teacher.available_slots
         if (!available_slots[slotDate] || !available_slots[slotDate].includes(slotTime)) {
             return res.status(404).json({ success: false, message: "Teacher is not avaiable at this time" })
         }
@@ -69,6 +69,7 @@ const bookAppointment = async (req, res) => {
         const newAppointment = await new appointmentModel(appointment)
         newAppointment.save()
 
+       // check the slot isn't already booked
 
         let slot_booked = teacher.slot_booked
 

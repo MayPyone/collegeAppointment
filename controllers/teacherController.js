@@ -29,6 +29,7 @@ const addAvailableSlots = async (req, res) => {
         const { slotDate, slotTime, email } = req.body
         const teacher = await teacherModel.findOne({ email })
         let available_slots = teacher.available_slots
+        // if the available_slots object has the slotDate
         if (!available_slots[slotDate]) {
             available_slots[slotDate] = []
         }

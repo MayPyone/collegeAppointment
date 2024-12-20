@@ -21,7 +21,6 @@ describe('professor login', () => {
     });
     db = await connection.db(globalThis.__MONGO_DB_NAME__);
    await request(app).post('/api/admin/addTeacher').send({name: 'candy', email: 'candy@gmail.com', password: '12345678'})
-
    await request(app).post('/api/admin/addStudent').send({ name: 'student1',email: 'student1@gmail.com', password: '12345678'})
    await request(app).post('/api/admin/addStudent').send({ name: 'student2',email: 'student2@gmail.com', password: '12345678'})
 
@@ -103,9 +102,6 @@ describe('professor login', () => {
     expect(cancellation.status).toBe(200)
 
   });
-
-
-
 
   afterAll(async () => {
     await mongoose.connection.close();

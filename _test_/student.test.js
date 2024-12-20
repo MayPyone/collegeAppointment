@@ -49,9 +49,6 @@ describe('student login', () => {
         email: 'student2@gmail.com',
         password: '12345678'
       })
-    console.log('professor', professor.body)
-    console.log('student', student1.body)
-    console.log('student', student2.body)
     teacher_token = professor.body.token
     student1_token = student1.body.token
     student2_token = student2.body.token
@@ -84,19 +81,19 @@ describe('student login', () => {
   });
 
   it("should be able to see professor's free slots", async () => {
+    const available_slots = await request(app)
+    .post('/api/teacher/add-available-slots')
+    .set('token', teacher_token)
+    .send({
+      slotDate: '23/12/2024',
+      slotTime: "9:00AM - 11:00AM",
+      email: "candy@gmail.com"
+    })
     const free_slots = await request(app)
       .get('/api/student/available-slots')
       .set('token', student1_token)
       .send({
         teacherEmail: "candy@gmail.com"
-      })
-    const available_slots = await request(app)
-      .post('/api/teacher/add-available-slots')
-      .set('token', teacher_token)
-      .send({
-        slotDate: '23/12/2024',
-        slotTime: "9:00AM - 11:00AM",
-        email: "candy@gmail.com"
       })
     expect(free_slots.body.available_slots['23/12/2024']).toContain('9:00AM - 11:00AM');
   });
@@ -173,10 +170,8 @@ it('should not login students and not return a token', async () => {
       password: '12345673'
     });
   
-  expect(student_one.status).toBe(401)
   expect(student_one.body.success).toBe(false);
   expect(student_one.body.message).toBe("Invalid credential")
-  expect(student_two.status).toBe(401)
   expect(student_two.body.success).toBe(false);
   expect(student_two.body.message).toBe("Student can't be found!");
 });

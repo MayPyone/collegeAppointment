@@ -9,6 +9,7 @@
   - [🛠 Built With](#built-with)
     - [Tech Stack](#tech-stack)
     - [Key Features](#key-features)
+    - [🚀 Live Demo](#live-demo)
   - [🚀 Getting Started](#getting-started)
     - [Prerequisites](#prerequisites)
     - [Setup](#setup)
@@ -49,6 +50,12 @@ This project implements backend APIs for a college appointment system that allow
 5. **Automated E2E Testing**: Validates the full user flow described in the requirements.
 
 ---
+
+## 🚀 Live Demo <a name="live-demo"></a>
+
+- [Live Demo Link](https://collegeappointment.onrender.com/)
+
+<p align="right">(<a href="#readme-top">back to top</a>)</p>
 
 ## 🚀 Getting Started <a name="getting-started"></a>
 
